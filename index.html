@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Konkrete Protocols</title>
+	<meta charset="UTF-8">
+	<meta name="author" content="Sujit Mahavarkar">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+	<style>
+		<style>
+		body{
+			color: #000;
+		}
+		.content{
+			position: relative;
+		}
+		.buy-now-btn {
+			background-color: transparent;
+			color: #23527c;
+			border-radius: 30px;
+			transition: transform .2s;
+		}
+		.buy-now-btn:hover{
+			transform: scale(1.04);
+		}
+		.list-group-item{
+			border: none;
+			/*border-bottom: 1px solid #ddd;*/
+			/*border-radius: 0px;*/
+			margin-left: -1px;
+			margin-right: -1px;
+		}
+		.list-group{
+			margin-bottom: 0px;
+		}
+		.panel-body{
+			padding: 0px;
+		}
+		.panel-heading{
+			margin-left: 0px;
+			margin-right: 0px;
+		}
+		#buy-invoice-panel{
+			margin-top: -64px;
+		}
+		.circle-btn{
+			height: 130px;
+			width: 130px;
+			border-radius: 50%;
+			border: 2px solid ;
+			color: #fff;
+		}
+	</style>
+</style>
+</head>
+<body>
+	<section style="background-color: #070a0e;">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+					<div class="alert alert-danger hide text-center" id="alertAllInvoice">
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+					<p class="hide text-center" id="networkInfo" style="color: #fff;">
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="main-fold" id="mainFold" style="background-color: #070a0e;color: #fff;">
+		<div class="container">
+			<div class="row" style="padding-top:30px; margin-right: 0px !important;">
+				<div class="col-md-2">
+					<a href="/"><img src="http://v1.factorium.test/assets/images/white.png" width="200px;"></a>
+				</div>
+				<div class="col-md-1 col-md-offset-7">
+					<button class="btn" style="background-color: #141e27; color: #fff;" data-backdrop="static" data-keyboard="false" ><span id="balanceBtn"></span> Dai</button>
+				</div>
+				<div class="col-md-2">
+					<button class="btn pull-right" data-toggle="modal" data-target="#connectToWallet" style="background-color: #141e27; color: #fff;" data-backdrop="static" data-keyboard="false" id="connectToWalletBtn">Connect to wallet</button>
+				</div>
+			</div>
+			<div class="row text-center" style="margin-top: 10vh;">
+				<div class="col-md-4">
+					<br>
+					<h3 class="project-name">Asset Name</h3>
+					<p class="askingAmt">Asking Amount</p>
+				</div>
+				<div class="col-md-4 text-center">
+					<button class="btn btn-lg btn-info buy-now-btn circle-btn approval-btn">
+						Unlock Dai<br>
+						<span class="askingAmt"></span>
+					</button>
+					<p id="confirmationMessage" class="hide">Waiting for confirmation</p>
+				</div>
+				<div class="col-md-4">
+					<br>
+					<h3 class="invested-amount">Invested Amount</h3>
+					<p class="investedAmount">0 DAI</p>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="second-fold" style="background-color: #070a0e;">
+		<div class="container" style="padding: 85px 15px 85px 15px;">
+			<div class="row">
+			</div>
+		</div>
+	</section>
+	<section class="third-fold">
+		<div class="container">
+			<div class="row text-center" id="buy-invoice-panel">
+				<div class="col-md-6">
+					<div class="panel panel-default" style="box-shadow: 0px 0px 10px grey;">
+						<div class="panel-heading row" style="padding: 2rem 0;color: #aab8c1;">
+							<div class="col-md-5 text-left">
+								Asset
+							</div>
+							<div class="col-md-2 col-xs-2">
+								APY
+							</div>
+							<div class="col-md-3 col-xs-2">
+								Wallet
+							</div>
+							<div class="col-md-2 col-xs-2">
+								Collateral
+							</div>
+						</div>
+						<div class="panel-body">
+							<div class="">
+								<div class=""  style="border-top: 1px solid #e3e9eb; width:100%;">
+									<li class="list-group-item row" style="padding: 1em 0;" data-address="0x0fa0091260E73199EC458b6bE89dF1163D6BEE02">
+										<div class="col-md-5 col-xs-5 text-left">
+											Dai <a href="https://kovan.etherscan.io/token/{{$project->contract_address}}" style="color: #424242;" target="_blank"> <i class="fa fa-external-link" aria-hidden="true" style="font-size: 10px;"></i></a>
+										</div>
+										<div class="col-md-2 col-xs-2">
+											8.00%
+										</div>
+										<div class="col-md-3 col-xs-3">
+											<span id="daiSBal">0</span> DAI
+										</div>
+										<div class="col-md-2 col-xs-2">
+											Locked
+										</div>
+									</li>
+								</div>
+								<div class=""  style="border-top: 1px solid #e3e9eb; width:100%;">
+									<li class="list-group-item row" style="padding: 1em 0;" data-id="{{$project->id}}" data-asking="{{$project->investment->getCalculatedAskingPriceAttribute()}}" data-address="{{$project->contract_address}}" data-dueD="{{$project->investment->fund_raising_close_date}}" data-amount="{{$project->investment->invoice_amount}}">
+										<div class="col-md-5 col-xs-5 text-left">
+											Ether <a href="https://kovan.etherscan.io/token/{{$project->contract_address}}" style="color: #424242;" target="_blank"> <i class="fa fa-external-link" aria-hidden="true" style="font-size: 10px;"></i></a>
+										</div>
+										<div class="col-md-2 col-xs-2">
+											8.00%
+										</div>
+										<div class="col-md-3 col-xs-3">
+											<span id="ethSBal">0</span> ETH
+										</div>
+										<div class="col-md-2 col-xs-2">
+											Locked
+										</div>
+									</li>
+								</div>
+								<div class=""  style="border-top: 1px solid #e3e9eb; width:100%;">
+									<li class="list-group-item row" style="padding: 1em 0;" data-address="0x9Cab6468FCd8a245e03b80c321070dE80290f173">
+										<div class="col-md-5 col-xs-5 text-left">
+											IVTDemo <a href="https://kovan.etherscan.io/token/0x9Cab6468FCd8a245e03b80c321070dE80290f173" style="color: #424242;" target="_blank"> <i class="fa fa-external-link" aria-hidden="true" style="font-size: 10px;"></i></a>
+										</div>
+										<div class="col-md-2 col-xs-2">
+											8.00%
+										</div>
+										<div class="col-md-3 col-xs-3">
+											<span id="ivtSBal">0</span> IVT
+										</div>
+										<div class="col-md-2 col-xs-2">
+											Locked
+										</div>
+									</li>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="panel panel-default" style="box-shadow: 0px 0px 10px grey;">
+						<div class="panel-heading row" style="padding: 2rem 0;color: #aab8c1;">
+							<div class="col-md-6 text-left">
+								Asset
+							</div>
+							<div class="col-md-2 col-xs-2">
+								APY
+							</div>
+							<div class="col-md-2 col-xs-2">
+								Wallet
+							</div>
+							<div class="col-md-2 col-xs-2">
+								Collateral
+							</div>
+						</div>
+						<div class="panel-body">
+							<div class="">
+								<div class=""  style="border-top: 1px solid #e3e9eb; width:100%;">
+									<li class="list-group-item row" style="padding: 1em 0;" data-address="0x8C65Fd9B3232B3D6BDC495c52254654c096D4c7F">
+										<div class="col-md-6 col-xs-6 text-left">
+											Dai <a href="https://kovan.etherscan.io/token/0x8C65Fd9B3232B3D6BDC495c52254654c096D4c7F" style="color: #424242;" target="_blank"> <i class="fa fa-external-link" aria-hidden="true" style="font-size: 10px;"></i></a>
+										</div>
+										<div class="col-md-2 col-xs-2">
+											8.00%
+										</div>
+										<div class="col-md-2 col-xs-2">
+											<span id="daiBBal">0</span> DAI
+										</div>
+										<div class="col-md-2 col-xs-2">
+											Locked
+										</div>
+									</li>
+								</div>
+								<div class=""  style="border-top: 1px solid #e3e9eb; width:100%;">
+									<li class="list-group-item row" style="padding: 1em 0;"  data-address="0xdDb4BacFfbaa069c5fF3C092020C4410cE72c63C" >
+										<div class="col-md-6 col-xs-6 text-left">
+											Ether <a href="https://kovan.etherscan.io/token/0xdDb4BacFfbaa069c5fF3C092020C4410cE72c63C" style="color: #424242;" target="_blank"> <i class="fa fa-external-link" aria-hidden="true" style="font-size: 10px;"></i></a>
+										</div>
+										<div class="col-md-2 col-xs-2">
+											8.00%
+										</div>
+										<div class="col-md-2 col-xs-2">
+											<span id="ethBBal">0</span> ETH
+										</div>
+										<div class="col-md-2 col-xs-2">
+											Locked
+										</div>
+									</li>
+								</div>
+								<div class=""  style="border-top: 1px solid #e3e9eb; width:100%;">
+									<li class="list-group-item row" style="padding: 1em 0;" data-address="0xdDb4BacFfbaa069c5fF3C092020C4410cE72c63C">
+										<div class="col-md-6 col-xs-6 text-left">
+											IVTDemo <a href="https://kovan.etherscan.io/token/0xdDb4BacFfbaa069c5fF3C092020C4410cE72c63C" style="color: #424242;" target="_blank"> <i class="fa fa-external-link" aria-hidden="true" style="font-size: 10px;"></i></a>
+										</div>
+										<div class="col-md-2 col-xs-2">
+											8.00%
+										</div>
+										<div class="col-md-2 col-xs-2">
+											<span id="ivtBBal">0</span> IVT
+										</div>
+										<div class="col-md-2 col-xs-2">
+											Locked
+										</div>
+									</li>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<script
+	src="https://code.jquery.com/jquery-3.4.1.min.js"
+	integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+	crossorigin="anonymous"></script>
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.36/dist/web3.min.js" integrity="sha256-nWBTbvxhJgjslRyuAKJHK+XcZPlCnmIAAMixz6EefVk=" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="/js/abi.js"></script>
+    <script type="text/javascript" src="/js/app.js"></script>
+    <script type="text/javascript" src="/js/error.js"></script>
+	<script type="text/javascript">
+		window.addEventListener('load', async () => {
+			if (window.ethereum) {
+				window.web3 = new Web3(ethereum);
+				try{
+					if(ethereum._metamask.isEnabled()){
+						(!ethereum.selectedAddress) ? $('#connectToWallet').modal('show') : console.log('Enabled');
+						var uAddress = ethereum.selectedAddress;
+						getBalance(uAddress);
+						window.ethereum.on('accountsChanged', async (accounts) => {
+							var uAddress = accounts[0];
+							var shortText = jQuery.trim(uAddress.toString()).substring(0, 10)+ "...";
+							$('#connectToWalletBtn').text(shortText);
+							var balance = await getDaiBalance(ethereum.selectedAddress);
+							var balance = web3.utils.fromWei(balance.toString(), 'ether');
+							var b = Number(balance).toFixed(3);
+							$('#balanceBtn').text(b);
+						});
+						var shortText = jQuery.trim(uAddress.toString()).substring(0, 10)+ "...";
+						$('#connectToWalletBtn').text(shortText);
+						var askAmount, pid, cAddress, dueD, amount,df,tAmount;
+						$('li.list-group-item').each(function () {
+							var ca = $(this).data('address');
+							getInvTokenBalance(ca).then(async (res) => {
+								if(res === 0){
+									$('li.list-group-item').addClass('hide');
+								}
+							});
+						});
+						$('li.list-group-item').on('click',function (e) {
+							$('li.list-group-item').each(function () {
+								$(this).removeClass('list-group-item-info');
+							});
+							$(this).addClass('list-group-item-info');
+							cAddress = $(this).data('address');
+							console.log(cAddress);
+							approvalStatus(cAddress);
+						});
+						$('.circle-btn').on('click',function (e) {
+							e.preventDefault();
+							if($(this).hasClass('approval-btn') && cAddress && tAmount){
+								approval(cAddress,tAmount);
+							}else if($(this).hasClass('buy-now') && cAddress && askAmount){
+								var hPid = btoa(pid);
+								byInvoice(cAddress,askAmount,hPid,pid);
+								$('.loader-overlay').show();
+							} else if($(this).hasClass('redeem-btn') && cAddress){
+								$('.loader-overlay').hide();
+								getInvTokenBalance(cAddress);
+								$('#redeemInvTokenModal').modal('show');
+								$('form#redeemTokenForm').submit(function (t) {
+									t.preventDefault();
+									var invToken = $('input[name="invToken"]').val();
+									redeemInvToken(cAddress, invToken);
+        							//getDaiBalance(ethereum.selectedAddress);
+        						});
+							}else{
+								showAlertMessage('Please select any project',4000);
+							}
+						});
+					}else{
+						$('#connectToWallet').modal('show');
+						console.log('not enabled');
+					}
+					//ethereum.autoRefreshOnNetworkChange = false;
+					//await ethereum.enable();
+				}catch(err){
+					if(!ethereum._metamask.isEnabled()){
+						$('#connectToWallet').modal('show');
+					}
+					console.log(err);
+				}
+				$('#metamaskConnect').on('click',function (e) {
+					ethereum.enable().then(function (accounts) {
+						location.reload();
+					});
+				});
+			}else{
+				showAlertMessage('Browser does not have metamask',3000000);
+				console.log('Browser does not have metamask');
+			}
+		// console.log(abi);
+	});
+</script>
+</body>
+</html>
